@@ -43,7 +43,8 @@ class LinkedList:
         self.head = self.head.next
         
         # Flipping the head card
-        self.head.card.flip_card()
+        if self.head.card.face_down:
+            self.head.card.flip_card()
         return temp.card
     
     # Function to display elements in reversed order
@@ -56,7 +57,7 @@ class LinkedList:
         # Temporary array of the cards
         cards_array = []
         current = self.head
-        
+
         # Appending the cards into the array
         while current:
             cards_array.append(current.card)
@@ -95,7 +96,7 @@ class LinkedList:
         # Return the head
         return self.head.card
     
-    def view_selected_node(self,card_name):
+    def find_node(self,card_name):
         # If list is empty
         if self.is_empty():
             return None
@@ -104,7 +105,7 @@ class LinkedList:
         current = self.head
         # Loop continues till a specific card is found else returns none
         while current:
-            if  current.card.card_name==card_name and not current.card.face_down: # If card name of card being compared is equal to card to be searched and the card is visible
+            if  current.card.name==card_name: # If card name of card being compared is equal to card to be searched and the card is visible
                 return current.card
             current = current.next
         return None # Return none in case of card not found in the list

@@ -26,3 +26,20 @@ def validate_movement(source,destination,source_index,destination_index):
         return False
 
     return True
+
+def valid_move(source_index,destination_index):
+    if not (str(source_index).isnumeric() and str(destination_index).isnumeric()):
+        return False
+    
+    source_index = int(source_index)
+    destination_index = int(destination_index)
+
+    if source_index < 1 or source_index > 7:
+            return False
+    if destination_index < 1 or destination_index > 7:
+            return False
+    
+    if destination_index==source_index:
+        return False
+    
+    return True

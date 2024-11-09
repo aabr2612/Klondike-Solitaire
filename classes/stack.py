@@ -23,10 +23,17 @@ class Stack:
     # Viewing the top card in the stack
     def peek(self):
         # If the size of the stack is greater than 0
-        if self.size>0:
-            return self.linkedList.view_first_node()
-        return None
+        if self.is_empty():
+            return None
+        return self.linkedList.view_first_node()
     
+    # Finding a card in stack
+    def find_card(self,card_name):
+        if self.is_empty():
+            return None
+
+        return self.linkedList.find_node(card_name)
+
     # Number of cards in stack
     def cards_count(self):
         return self.size

@@ -13,6 +13,8 @@ def main():
                         os.system("cls")
                         ui.ui.header()
                         game.display()
+                        if(game.game_win_condition()):
+                              break
                         game_choice = ui.ui.game_menu()
                         if game_choice=="1":
                               game.draw_card_from_stockpile()
@@ -25,7 +27,10 @@ def main():
                               destination_index = input("          Enter the destination index: ")
                               input("          "+game.move_card(source,destination,source_index,destination_index)+"Press any key to continue...")
                         elif game_choice=="3":
-                              game.move_multiple_cards()
+                              source_index = input("          Enter the source tableau index: ")
+                              destination_index = input("          Enter the destination tableau index: ")
+                              card_name = input("          Enter card name from source as 'AC', 'KD': ")
+                              input("          "+game.move_multiple_cards(source_index,destination_index,card_name)+"Press any key to continue...")
                         elif game_choice=="4":
                               break
                         else:
