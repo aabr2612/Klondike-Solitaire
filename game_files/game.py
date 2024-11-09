@@ -29,7 +29,7 @@ class Game:
             self.stock_pile.enqueue(card)
             card=self.deck.draw_card()
 
-
+    # Move card functionality
     def move_card(self,source,destination,source_index,destination_index):
         print ( source+"  "+destination+"   "+str(source_index)+"   "+str(destination_index))
         source_index = int(source_index)
@@ -57,7 +57,7 @@ class Game:
         #     print ("Waste to tableau")
         # if source == "W" and destination=="F":
         #     print ("Waste to tableau")
-        return " card not moved"
+        return "Invalid move! Card not moved. "
     
     # Function to check the validity of the tableau to tableau movement
     def valid_tableau_to_tableau_move(self,source_index,destination_index):
@@ -68,11 +68,15 @@ class Game:
         # Peek the cards of source and destination
         destination_card = self.tableau[destination_index].peek()
         source_card = self.tableau[source_index].peek()
-        print(str(destination_card)+"<---"+str(source_card))
+        print(str(source_card)+"--->"+str(destination_card))
         
         # If the destination tableau is empty and the card being placed is King it is a valid move
         if (self.tableau[destination_index].is_empty() and source_card.rank=="King"):
             return True
+
+        # If the destination is empty and source card is not a king it is not a valid move
+        if (self.tableau[destination_index].is_empty() and source_card.rank!="King"):
+            return False
         
         # If the source and destination both have cards then check the card's rank and color to ensure the movement
         if destination_card.check_rank_lower(source_card) and destination_card.check_card_color()!=source_card.check_card_color():
@@ -90,11 +94,16 @@ class Game:
         # Peek the cards of source and destination
         destination_card = self.foundation[destination_index].peek()
         source_card = self.tableau[source_index].peek()
-        print(str(destination_card)+"<---"+str(source_card))
+
+        print(str(source_card)+"--->"+str(destination_card))
 
         # If the destination foundation is empty and the card being placed is Ace it is a valid move
         if (self.foundation[destination_index].is_empty() and source_card.rank=="Ace"):
             return True
+
+        # If the destination is empty and source card is not an Ace it is not a valid move
+        if (self.tableau[destination_index].is_empty() and source_card.rank!="Ace"):
+            return False
         
         # If the source and destination both have cards then check the source card's rank is higher and suit is same to ensure movement
         if source_card.check_rank_lower(destination_card) and destination_card.suit==source_card.suit:
