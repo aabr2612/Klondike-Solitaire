@@ -49,7 +49,7 @@ class Game:
             if source == "T" and destination=="T":
                 # If the movement is valid
                 if self.valid_tableau_to_tableau_move(source_index,destination_index):
-                    msg = f"Card moved {str(self.tableau[source_index].peek())} -> {str(self.tableau[destination_index].peek())} "
+                    msg = f"Card moved {str(self.tableau[source_index].peek())} ---> {str(self.tableau[destination_index].peek())} "
                     self.tableau[destination_index].push(self.tableau[source_index].pop())
                     self.count+=1
                     return msg
@@ -58,7 +58,7 @@ class Game:
             if source == "T" and destination=="F":
                 # If the movement is valid
                 if self.valid_tableau_to_foundation_move(source_index,destination_index):
-                    msg = f"Card moved {str(self.tableau[source_index].peek())} -> {str(self.foundation[destination_index].peek())} "
+                    msg = f"Card moved {str(self.tableau[source_index].peek())} ---> {str(self.foundation[destination_index].peek())} "
                     self.foundation[destination_index].push(self.tableau[source_index].pop())
                     self.count+=1
                     return msg
@@ -67,7 +67,7 @@ class Game:
             if source == "F" and destination=="T":
                 # If the movement is valid
                 if self.valid_foundation_to_tableau_move(source_index,destination_index):
-                    msg = f"Card moved {str(self.foundation[source_index].peek())} -> {str(self.tableau[destination_index].peek())}"
+                    msg = f"Card moved {str(self.foundation[source_index].peek())} ---> {str(self.tableau[destination_index].peek())}"
                     self.tableau[destination_index].push(self.foundation[source_index].pop())
                     self.count+=1
                     return msg
@@ -76,7 +76,7 @@ class Game:
             if source == "W" and destination=="T":
                 # If the movement is valid
                 if self.valid_waste_to_tableau_move(destination_index):
-                    msg = f"Card moved {str(self.stock_pile.peek())} -> {str(self.tableau[destination_index].peek())}"
+                    msg = f"Card moved {str(self.stock_pile.peek())} ---> {str(self.tableau[destination_index].peek())}"
                     self.tableau[destination_index].push(self.stock_pile.dequeue())
                     self.count+=1
                     return msg
@@ -85,7 +85,7 @@ class Game:
             if source == "W" and destination=="F":
                 # If the movement is valid
                 if self.valid_waste_to_foundation_move(destination_index):
-                    msg = f"Card moved {str(self.stock_pile.peek())} -> {str(self.foundation[destination_index].peek())}"
+                    msg = f"Card moved {str(self.stock_pile.peek())} ---> {str(self.foundation[destination_index].peek())}"
                     self.foundation[destination_index].push(self.stock_pile.dequeue())
                     self.count+=1
                     return msg
@@ -132,8 +132,6 @@ class Game:
         destination_card = self.foundation[destination_index].peek()
         source_card = self.tableau[source_index].peek()
 
-        print(str(source_card)+"--->"+str(destination_card))
-
         # If the destination foundation is empty and the card being placed is Ace it is a valid move
         if (self.foundation[destination_index].is_empty() and source_card.rank=="Ace"):
             return True
@@ -157,8 +155,6 @@ class Game:
         # Peek the cards of source and destination
         destination_card = self.tableau[destination_index].peek()
         source_card = self.foundation[source_index].peek()
-
-        print(str(source_card)+"--->"+str(destination_card))
 
         # If the destination tableau is empty and the card being placed is King it is a valid move
         if (self.tableau[destination_index].is_empty() and source_card.rank=="King"):
@@ -184,8 +180,6 @@ class Game:
         destination_card = self.tableau[destination_index].peek()
         source_card = self.stock_pile.peek()
 
-        print(str(source_card)+"--->"+str(destination_card))
-
         # If the destination tableau is empty and the source card being placed is King it is a valid move
         if (self.tableau[destination_index].is_empty() and source_card.rank=="King"):
             return True
@@ -209,8 +203,6 @@ class Game:
         # Peek the cards of source and destination
         destination_card = self.foundation[destination_index].peek()
         source_card = self.stock_pile.peek()
-
-        print(str(source_card)+"--->"+str(destination_card))
 
         # If the destination foundation is empty and the card being placed is Ace it is a valid move
         if (self.foundation[destination_index].is_empty() and source_card.rank=="Ace"):
@@ -242,7 +234,6 @@ class Game:
             # Peek the cards of source and destination
             destination_card = self.tableau[destination_index].peek()
             source_card = self.tableau[source_index].find_card(card_name)
-            print(str(source_card)+"--->"+str(destination_card))
 
             # If no card is found
             if source_card==None:
@@ -255,7 +246,7 @@ class Game:
             # If the destination tableau is empty and the source card being placed is King it is a valid move
             if (self.tableau[destination_index].is_empty() and source_card.rank=="King"):
                 self.move_cards(source_index,destination_index,card_name)
-                return "Card moved"
+                return f"Card moved {str(source_card)} ---> {str(destination_card)}"
 
             # If the destination is empty and source card is not a king it is not a valid move
             if (self.tableau[destination_index].is_empty() and source_card.rank!="King"):
@@ -264,7 +255,7 @@ class Game:
             # If the source and destination both have cards then check the card's rank and color to ensure the movement
             if destination_card.check_rank_lower(source_card) and destination_card.check_card_color()!=source_card.check_card_color():
                 self.move_cards(source_index,destination_index,card_name)
-                return "Card moved"
+                return f"Card moved {str(source_card)} ---> {str(destination_card)}"
             
             # If none of the condition is valid it means the card movement is not valid
             return "Invalid move! "
@@ -274,16 +265,19 @@ class Game:
 
     # Moving multiple cards from source to destination
     def move_cards(self,source_index,destination_index,card_name):
-        cards = []
+        # Using a temporary stack to store the cards of the source tableau
+        cards = Stack()
         while(True):
             card = self.tableau[source_index].pop()
+            # Loop continues till the card is found in the source tableau
             if card.name == card_name:
-                cards.append(card)
+                cards.push(card)
                 break
-            cards.append(card)
+            cards.push(card)
 
-        for i in range(len(cards)-1,-1,-1):
-            self.tableau[destination_index].push(cards[i])
+        # Pushing the cards into the destination tableau
+        while not cards.is_empty():
+            self.tableau[destination_index].push(cards.pop())
     
     # Displaying current game state
     def display(self):
@@ -315,4 +309,3 @@ class Game:
             if foundation.cards_count()!=13:
                 return False
         return True
-            

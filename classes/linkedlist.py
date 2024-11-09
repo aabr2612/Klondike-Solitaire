@@ -96,6 +96,7 @@ class LinkedList:
         # Return the head
         return self.head.card
     
+    # Finding a specific node by cardname in list
     def find_node(self,card_name):
         # If list is empty
         if self.is_empty():
@@ -110,6 +111,7 @@ class LinkedList:
             current = current.next
         return None # Return none in case of card not found in the list
 
+    # Flipping all cards to face down
     def flip_cards(self):
         # If the linkedlist is empty
         if self.is_empty():
