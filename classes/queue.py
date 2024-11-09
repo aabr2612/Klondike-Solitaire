@@ -51,12 +51,12 @@ class Queue:
     def display(self):
         # Displaying stock pile
         print("\nStock Pile:", end=" ")
-        if self.stock_pile.is_empty(): print("[No cards available!]")
-        else: print("[Cards available]")
+        if self.stock_pile.is_empty(): print(" No cards available!")
+        else: print("Cards available")
         
         # Displaying waste pile
         print("\nWaste Pile:",end=" ")
-        if self.waste_pile.is_empty():print("None")
+        if self.waste_pile.is_empty():print("No cards available!")
         else: self.waste_pile.display()
 
     # Checks if the queue is empty

@@ -104,7 +104,7 @@ class LinkedList:
         current = self.head
         # Loop continues till a specific card is found else returns none
         while current:
-            if  current.card.card_name==card_name: # If card name of card being compared is equal to card to be searched
+            if  current.card.card_name==card_name and not current.card.face_down: # If card name of card being compared is equal to card to be searched and the card is visible
                 return current.card
             current = current.next
         return None # Return none in case of card not found in the list

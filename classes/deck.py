@@ -34,12 +34,6 @@ class Deck:
         print("No more cards to draw!")
         return None
 
-    # Function to reset the current deck so that same deck can be updated and used again
-    def reset_deck(self):
-        self.cards.clear() # Clearing the cards
-        self.loadCards() # Loading the cards again
-        self.shuffle_cards_randomly() # Shuffling cards
-
     # Function to display all cards of the deck
     def display(self):
         i = 1
