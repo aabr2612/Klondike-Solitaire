@@ -28,6 +28,10 @@ class Queue:
             self.waste_pile.flip_cards()
         return card
     
+    # Peek for queue
+    def peek(self):
+        return self.waste_pile.peek()
+    
     # Drawing card from stock to waste pile
     def draw_card(self):
         # If stock and waste 
