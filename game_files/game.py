@@ -40,7 +40,7 @@ class Game:
             
             # Checks for source and destination movements and indexes
             if not game_files.utility.validate_movement(source,destination,source_index,destination_index):
-                return "Invalid movements! "
+                return "Invalid movements!"
 
             source_index = int(source_index)-1
             destination_index = int(destination_index)-1
@@ -49,7 +49,7 @@ class Game:
             if source == "T" and destination=="T":
                 # If the movement is valid
                 if self.valid_tableau_to_tableau_move(source_index,destination_index):
-                    msg = f"Card moved {str(self.tableau[source_index].peek())} ---> {str(self.tableau[destination_index].peek())} "
+                    msg = f"Card moved {str(self.tableau[source_index].peek())} ---> {str(self.tableau[destination_index].peek())}"
                     self.tableau[destination_index].push(self.tableau[source_index].pop())
                     self.count+=1
                     return msg
@@ -58,7 +58,7 @@ class Game:
             if source == "T" and destination=="F":
                 # If the movement is valid
                 if self.valid_tableau_to_foundation_move(source_index,destination_index):
-                    msg = f"Card moved {str(self.tableau[source_index].peek())} ---> {str(self.foundation[destination_index].peek())} "
+                    msg = f"Card moved {str(self.tableau[source_index].peek())} ---> {str(self.foundation[destination_index].peek())}"
                     self.foundation[destination_index].push(self.tableau[source_index].pop())
                     self.count+=1
                     return msg
@@ -91,7 +91,7 @@ class Game:
                     return msg
                 
             # If no movement takes place returns invalid move
-            return "Invalid move! "
+            return "Invalid move!"
 
         # If any error occurs
         except Exception as e:
@@ -221,15 +221,18 @@ class Game:
     # Moving multiple cards
     def move_multiple_cards(self,source_index,destination_index,card_name):
         try:
-            if not game_files.utility.valid_move(source_index,destination_index):
-                return "Invalid move! "
+            # Function to capitalize the card name alphabets for better comparison
+            card_name = game_files.utility.capitalize_card_name(card_name)
             
-            print(f"{source_index}  {destination_index}")
+            # Checks if the move is valid or not for multiple cards movement
+            if not game_files.utility.valid_move(source_index,destination_index):
+                return "Invalid move!"
+            
             source_index = int(source_index)-1
             destination_index = int(destination_index)-1
             # If source is empty
             if self.tableau[source_index].is_empty():
-                return "Invalid move! "
+                return "Invalid move!"
             
             # Peek the cards of source and destination
             destination_card = self.tableau[destination_index].peek()
@@ -237,11 +240,11 @@ class Game:
 
             # If no card is found
             if source_card==None:
-                return "No such card found! "
+                return "No such card found!"
             
             # If the card is found but face down
             if source_card.face_down:
-                return "No such card found! "
+                return "No such card found!"
 
             # If the destination tableau is empty and the source card being placed is King it is a valid move
             if (self.tableau[destination_index].is_empty() and source_card.rank=="King"):
@@ -250,7 +253,7 @@ class Game:
 
             # If the destination is empty and source card is not a king it is not a valid move
             if (self.tableau[destination_index].is_empty() and source_card.rank!="King"):
-                return "Invalid move! "
+                return "Invalid move!"
             
             # If the source and destination both have cards then check the card's rank and color to ensure the movement
             if destination_card.check_rank_lower(source_card) and destination_card.check_card_color()!=source_card.check_card_color():
@@ -258,7 +261,7 @@ class Game:
                 return f"Card moved {str(source_card)} ---> {str(destination_card)}"
             
             # If none of the condition is valid it means the card movement is not valid
-            return "Invalid move! "
+            return "Invalid move!"
         
         except Exception as e:
             return f"An error occured: {e}"

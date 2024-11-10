@@ -56,3 +56,7 @@ def valid_move(source_index,destination_index):
         return False
     
     return True
+
+# Function to capitalize the card name alphabets
+def capitalize_card_name(card_name):
+    return card_name[:-1] + card_name[-1].upper()

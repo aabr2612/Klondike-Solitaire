@@ -1,23 +1,37 @@
-import os
 from game_files.game import Game
 import ui.ui
+import msvcrt
 
+# Main
 def main():
-      os.system("cls")
+      # Main loop of the menu
       while(True):
-            os.system("cls")
+            # Menu choice
             menu_choice = ui.ui.main_menu()
+
+            # If 1 the game starts
             if menu_choice == "1":
+                  # Game object
                   game = Game()
+                  
+                  # Main game loop
                   while(True):
-                        os.system("cls")
                         ui.ui.header()
                         game.display()
+
+                        # If wins the game
                         if(game.game_win_condition()):
+                              ui.ui.game_won(game.count)
                               break
+                        
+                        # Game move choice
                         game_choice = ui.ui.game_menu()
+                        
+                        # If choice is 1 draw card from stockpile
                         if game_choice=="1":
                               game.draw_card_from_stockpile()
+                              
+                        # If choice is 2 move card
                         elif game_choice=="2":
                               source = input("          Enter the source(Tableau [T], Waste[W], Foundation[F]): ")
                               destination = input("          Enter the destination(Tableau [T], Foundation[F]): ")
@@ -25,25 +39,41 @@ def main():
                               if source.capitalize()=="T" or source.capitalize()=="F":
                                     source_index = input("          Enter the source index: ")
                               destination_index = input("          Enter the destination index: ")
-                              input("          "+game.move_card(source,destination,source_index,destination_index)+"Press any key to continue...")
+                              print("          "+game.move_card(source,destination,source_index,destination_index)+" Press any key to continue...",end="")
+                              msvcrt.getch()
+                              
+                        # If choice is 3 move multiple cards
                         elif game_choice=="3":
                               source_index = input("          Enter the source tableau index: ")
                               destination_index = input("          Enter the destination tableau index: ")
                               card_name = input("          Enter card name from source as 'AC', 'KD': ")
-                              input("          "+game.move_multiple_cards(source_index,destination_index,card_name)+"Press any key to continue...")
+                              print("          "+game.move_multiple_cards(source_index,destination_index,card_name)+" Press any key to continue...",end="")
+                              msvcrt.getch()
+
+                        # If choice is 4 return to main menu
                         elif game_choice=="4":
                               break
-                        else:
-                              input("          Invalid choice! Press any key to continue...")
-
-            elif menu_choice=="2":
-                  os.system("cls")
-                  ui.ui.instructions_to_play_game()
-            elif menu_choice=="3":
-                  input("                                                    Thanks for playing the game! Press any key to continue...")
-                  break
-            else:
-                  input("                                                    Invalid choice! Press any key to continue...")
                         
+                        # Invalid input
+                        else:
+                              print("          Invalid choice! Press any key to continue...",end="")
+                              msvcrt.getch()
+
+            # Displaying instructions
+            elif menu_choice=="2":
+                  ui.ui.instructions_to_play_game()
+                  
+            # Exit the game
+            elif menu_choice=="3":
+                  print("                                                    Thanks for playing the game! Press any key to continue...",end="")
+                  msvcrt.getch()
+                  break
+            
+            # Invalid input
+            else:
+                  print("                                                    Invalid choice! Press any key to continue...",end="")
+                  msvcrt.getch()
+
+# Calling main        
 if __name__ == "__main__":
     main()
