@@ -312,16 +312,6 @@ class Game:
         
     # Win condition if all four foundations are filled by cards
     def game_win_condition(self):
-        if self.stock_pile.is_empty():
-            for i in range(7):
-                if not self.tableau[i].is_empty():
-                    current = self.tableau[i].linkedList.head
-                    while (current):
-                        if(current.card.face_down):
-                            return False
-                        current = current.next
-            return True
-
         for foundation in self.foundation:
             if foundation.cards_count()!=13:
                 return False
