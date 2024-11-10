@@ -314,11 +314,12 @@ class Game:
     def game_win_condition(self):
         if self.stock_pile.is_empty():
             for i in range(7):
-                current = self.tableau[i].linkedList.head
-                while (current):
-                    if(current.card.face_down):
-                        return False
-                    current = current.next
+                if not self.tableau[i].is_empty():
+                    current = self.tableau[i].linkedList.head
+                    while (current):
+                        if(current.card.face_down):
+                            return False
+                        current = current.next
             return True
 
         for foundation in self.foundation:
