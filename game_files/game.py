@@ -13,6 +13,7 @@ class Game:
         self.stock_pile = Queue() # Stock pile
         self.initialize_game() # Initializing game
         self.count = 0 # Count to keep a track of the moves
+        self.hint_count = 0 # Setting the hint count to 0
     
     # Game initialization
     def initialize_game(self):
@@ -24,8 +25,10 @@ class Game:
                     if j==i:
                         card.flip_card()
                     self.tableau[i].push(card)
+                    
         
         card = self.deck.draw_card()
+        
         # Pushing cards into stockpile from deck
         while card:
             self.stock_pile.enqueue(card)
@@ -299,7 +302,8 @@ class Game:
         # Displaying stock and waste
         self.stock_pile.display()
         
-        print(f"\nMove Counts: {self.count}\n")
+        # Printing the moves and hints count
+        print(f"\nMoves Count: {self.count}\nHints Count: {self.hint_count}")
     
     # Drawing card from stock to waste pile
     def draw_card_from_stockpile(self):
@@ -308,7 +312,51 @@ class Game:
         
     # Win condition if all four foundations are filled by cards
     def game_win_condition(self):
+        if self.stock_pile.is_empty():
+            for i in range(7):
+                current = self.tableau[i].linkedList.head
+                while (current):
+                    if(current.card.face_down):
+                        return False
+                    current = current.next
+            return True
+
         for foundation in self.foundation:
             if foundation.cards_count()!=13:
                 return False
         return True
+
+    # Hint if any valid move available
+    def get_hint(self):
+
+        # Checking if valid move for tableau to foundation
+        for i in range(7): # Iterating over the tableaus
+            for j in range(4): # Iterating over the foundations
+                # Checking move validity
+                if self.valid_tableau_to_foundation_move(i, j):
+                    self.hint_count+=1
+                    return f"Hint: Move card {str(self.tableau[i].peek())} from Tableau {i+1} to Foundation {j+1}."
+                
+        # Checking if valid move for tableau to another tableau
+        for i in range(7):  # Iterating over the tableaus
+            for j in range(7):  # Iterating over the tableaus
+                # Checking move validity
+                if i != j and self.valid_tableau_to_tableau_move(i, j):
+                    self.hint_count+=1
+                    return f"Hint: Move card {str(self.tableau[i].peek())} from Tableau {i+1} to Tableau {j+1}."
+        
+        # Checking if valid move for waste to tableau
+        for i in range(7): # Iterating over the tableaus
+            # Checking move validity
+            if self.valid_waste_to_tableau_move(i):
+                self.hint_count+=1
+                return f"Hint: Move card {str(self.stock_pile.peek())} from Waste to Tableau {i+1}."
+
+        # Checking if valid move for waste to foundation
+        for i in range(4): # Iterating over the foundations
+            # Checking move validity
+            if self.valid_waste_to_foundation_move(i):
+                self.hint_count+=1
+                return f"Hint: Move card {str(self.stock_pile.peek())} from Waste to Foundation {i+1}."
+
+        return "No hint available!"

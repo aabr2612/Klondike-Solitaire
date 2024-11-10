@@ -21,7 +21,7 @@ def main():
 
                         # If wins the game
                         if(game.game_win_condition()):
-                              ui.ui.game_won(game.count)
+                              ui.ui.game_won(game.count,game.hint_count)
                               break
                         
                         # Game move choice
@@ -50,8 +50,13 @@ def main():
                               print("          "+game.move_multiple_cards(source_index,destination_index,card_name)+" Press any key to continue...",end="")
                               msvcrt.getch()
 
-                        # If choice is 4 return to main menu
+                        # If choice is 4 get hint
                         elif game_choice=="4":
+                              print("          "+game.get_hint()+" Press any key to continue...",end="")
+                              msvcrt.getch()
+
+                        # If choice is 5 return to main menu
+                        elif game_choice=="5":
                               break
                         
                         # Invalid input

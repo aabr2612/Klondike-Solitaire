@@ -58,14 +58,15 @@ def game_menu():
           1. Draw card from stock pile
           2. Move card
           3. Move multiple cards
-          4. Exit""")
+          4. Get Hint
+          5. Exit""")
     option = input("          Enter your choice: ")
     return option
 
 # Game won
-def game_won(count):
+def game_won(count,hint):
     os.system("cls")
     header()
-    print(f"\n               Congratulations! You completed the game in {count} moves. Press any key to continue...",end="")
+    print(f"\n               Congratulations! You completed the game in {count} moves and used {hint} hints. Press any key to continue...",end="")
     msvcrt.getch()
     
