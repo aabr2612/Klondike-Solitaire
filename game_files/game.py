@@ -1,7 +1,9 @@
 from classes.stack import Stack
 from classes.deck import Deck
 from classes.queue import Queue
+from classes.card import Card
 import game_files.utility
+
 
 # Game Class
 class Game:
@@ -25,7 +27,6 @@ class Game:
                     if j==i:
                         card.flip_card()
                     self.tableau[i].push(card)
-                    
         
         card = self.deck.draw_card()
         
@@ -54,6 +55,8 @@ class Game:
                 if self.valid_tableau_to_tableau_move(source_index,destination_index):
                     msg = f"Card moved {str(self.tableau[source_index].peek())} ---> {str(self.tableau[destination_index].peek())}"
                     self.tableau[destination_index].push(self.tableau[source_index].pop())
+                    # Flipping the top card if needed
+                    self.flip_tableau_card(source_index)
                     self.count+=1
                     return msg
 
@@ -63,6 +66,7 @@ class Game:
                 if self.valid_tableau_to_foundation_move(source_index,destination_index):
                     msg = f"Card moved {str(self.tableau[source_index].peek())} ---> {str(self.foundation[destination_index].peek())}"
                     self.foundation[destination_index].push(self.tableau[source_index].pop())
+                    self.flip_tableau_card(source_index)
                     self.count+=1
                     return msg
         
@@ -72,6 +76,9 @@ class Game:
                 if self.valid_foundation_to_tableau_move(source_index,destination_index):
                     msg = f"Card moved {str(self.foundation[source_index].peek())} ---> {str(self.tableau[destination_index].peek())}"
                     self.tableau[destination_index].push(self.foundation[source_index].pop())
+                    if self.foundation[source_index].get_top()!=None:
+                        if self.foundation[source_index].get_top().card.get_face_down():
+                            self.foundation[source_index].get_top().card.flip_card()
                     self.count+=1
                     return msg
 
@@ -81,6 +88,8 @@ class Game:
                 if self.valid_waste_to_tableau_move(destination_index):
                     msg = f"Card moved {str(self.stock_pile.peek())} ---> {str(self.tableau[destination_index].peek())}"
                     self.tableau[destination_index].push(self.stock_pile.dequeue())
+                    if self.stock_pile.get_waste_pile().get_top()!=None:
+                        self.flip_cards(self.stock_pile.get_waste_pile().get_top())
                     self.count+=1
                     return msg
                     
@@ -90,6 +99,8 @@ class Game:
                 if self.valid_waste_to_foundation_move(destination_index):
                     msg = f"Card moved {str(self.stock_pile.peek())} ---> {str(self.foundation[destination_index].peek())}"
                     self.foundation[destination_index].push(self.stock_pile.dequeue())
+                    if self.stock_pile.get_waste_pile().get_top()!=None:
+                        self.flip_cards(self.stock_pile.get_waste_pile().get_top())
                     self.count+=1
                     return msg
                 
@@ -111,11 +122,11 @@ class Game:
         source_card = self.tableau[source_index].peek()
         
         # If the destination tableau is empty and the source card being placed is King it is a valid move
-        if (self.tableau[destination_index].is_empty() and source_card.rank=="King"):
+        if (self.tableau[destination_index].is_empty() and source_card.get_rank()=="King"):
             return True
 
         # If the destination is empty and source card is not a king it is not a valid move
-        if (self.tableau[destination_index].is_empty() and source_card.rank!="King"):
+        if (self.tableau[destination_index].is_empty() and source_card.get_rank()!="King"):
             return False
         
         # If the source and destination both have cards then check the card's rank and color to ensure the movement
@@ -136,15 +147,15 @@ class Game:
         source_card = self.tableau[source_index].peek()
 
         # If the destination foundation is empty and the card being placed is Ace it is a valid move
-        if (self.foundation[destination_index].is_empty() and source_card.rank=="Ace"):
+        if (self.foundation[destination_index].is_empty() and source_card.get_rank()=="Ace"):
             return True
 
         # If the destination foundation is empty and source card is not an Ace it is not a valid move
-        if (self.foundation[destination_index].is_empty() and source_card.rank!="Ace"):
+        if (self.foundation[destination_index].is_empty() and source_card.get_rank()!="Ace"):
             return False
         
         # If the source and destination both have cards then check the source card's rank is higher and suit is same to ensure movement
-        if source_card.check_rank_lower(destination_card) and destination_card.suit==source_card.suit:
+        if source_card.check_rank_lower(destination_card) and destination_card.get_suit()==source_card.get_suit():
             return True
         
         return False
@@ -160,23 +171,23 @@ class Game:
         source_card = self.foundation[source_index].peek()
 
         # If the destination tableau is empty and the card being placed is King it is a valid move
-        if (self.tableau[destination_index].is_empty() and source_card.rank=="King"):
+        if (self.tableau[destination_index].is_empty() and source_card.get_rank()=="King"):
             return True
 
         # If the destination tableau is empty and source card is not an King it is not a valid move
-        if (self.tableau[destination_index].is_empty() and source_card.rank!="King"):
+        if (self.tableau[destination_index].is_empty() and source_card.get_rank()!="King"):
             return False
         
         # If the source and destination both have cards then check the card's rank and color to ensure the movement
         if destination_card.check_rank_lower(source_card) and destination_card.check_card_color()!=source_card.check_card_color():
             return True
-        
+
         return False 
    
     # Function to check the validity of the foundation to tableau movement
     def valid_waste_to_tableau_move(self,destination_index):
         # If source is empty
-        if self.stock_pile.waste_pile.is_empty():
+        if self.stock_pile.get_waste_pile().is_empty():
             return False
 
         # Peek the cards of source and destination
@@ -184,11 +195,11 @@ class Game:
         source_card = self.stock_pile.peek()
 
         # If the destination tableau is empty and the source card being placed is King it is a valid move
-        if (self.tableau[destination_index].is_empty() and source_card.rank=="King"):
+        if (self.tableau[destination_index].is_empty() and source_card.get_rank()=="King"):
             return True
 
         # If the destination is empty and source card is not a king it is not a valid move
-        if (self.tableau[destination_index].is_empty() and source_card.rank!="King"):
+        if (self.tableau[destination_index].is_empty() and source_card.get_rank()!="King"):
             return False
         
         # If the source and destination both have cards then check the card's rank and color to ensure the movement
@@ -200,7 +211,7 @@ class Game:
     # Function to check the validity of the foundation to tableau movement
     def valid_waste_to_foundation_move(self,destination_index):
         # If source is empty
-        if self.stock_pile.waste_pile.is_empty():
+        if self.stock_pile.get_waste_pile().is_empty():
             return False
 
         # Peek the cards of source and destination
@@ -208,15 +219,15 @@ class Game:
         source_card = self.stock_pile.peek()
 
         # If the destination foundation is empty and the card being placed is Ace it is a valid move
-        if (self.foundation[destination_index].is_empty() and source_card.rank=="Ace"):
+        if (self.foundation[destination_index].is_empty() and source_card.get_rank()=="Ace"):
             return True
 
         # If the destination is empty and source card is not an Ace it is not a valid move
-        if (self.foundation[destination_index].is_empty() and source_card.rank!="Ace"):
+        if (self.foundation[destination_index].is_empty() and source_card.get_rank()!="Ace"):
             return False
         
         # If the source and destination both have cards then check the source card's rank is higher and suit is same to ensure movement
-        if source_card.check_rank_lower(destination_card) and destination_card.suit==source_card.suit:
+        if source_card.check_rank_lower(destination_card) and destination_card.get_suit()==source_card.get_suit():
             return True
         
         return False
@@ -224,8 +235,13 @@ class Game:
     # Moving multiple cards
     def move_multiple_cards(self,source_index,destination_index,card_name):
         try:
+            
             # Function to capitalize the card name alphabets for better comparison
             card_name = game_files.utility.capitalize_card_name(card_name)
+            
+            # If card name is given empty
+            if card_name == None:
+                return "Enter a valid card name!"
             
             # Checks if the move is valid or not for multiple cards movement
             if not game_files.utility.valid_move(source_index,destination_index):
@@ -236,30 +252,39 @@ class Game:
             # If source is empty
             if self.tableau[source_index].is_empty():
                 return "Invalid move!"
-            
+
+            # A card instance to compare it with the existing cards
+            card = Card(0,0,card_name)
+
+            # If source is empty
+            if self.tableau[source_index].is_empty():
+                return "Source is empty!"
+
             # Peek the cards of source and destination
             destination_card = self.tableau[destination_index].peek()
-            source_card = self.tableau[source_index].find_card(card_name)
+            source_card = self.tableau[source_index].find_card(card)
 
             # If no card is found
             if source_card==None:
                 return "No such card found!"
             
             # If the card is found but face down
-            if source_card.face_down:
+            if source_card.get_face_down():
                 return "No such card found!"
 
             # If the destination tableau is empty and the source card being placed is King it is a valid move
-            if (self.tableau[destination_index].is_empty() and source_card.rank=="King"):
+            if (self.tableau[destination_index].is_empty() and source_card.get_rank()=="King"):
+                self.count+=1
                 self.move_cards(source_index,destination_index,card_name)
                 return f"Card moved {str(source_card)} ---> {str(destination_card)}"
 
             # If the destination is empty and source card is not a king it is not a valid move
-            if (self.tableau[destination_index].is_empty() and source_card.rank!="King"):
+            if (self.tableau[destination_index].is_empty() and source_card.get_rank()!="King"):
                 return "Invalid move!"
             
             # If the source and destination both have cards then check the card's rank and color to ensure the movement
             if destination_card.check_rank_lower(source_card) and destination_card.check_card_color()!=source_card.check_card_color():
+                self.count+=1
                 self.move_cards(source_index,destination_index,card_name)
                 return f"Card moved {str(source_card)} ---> {str(destination_card)}"
             
@@ -275,8 +300,9 @@ class Game:
         cards = Stack()
         while(True):
             card = self.tableau[source_index].pop()
+            
             # Loop continues till the card is found in the source tableau
-            if card.name == card_name:
+            if card.get_card_name() == card_name:
                 cards.push(card)
                 break
             cards.push(card)
@@ -284,39 +310,35 @@ class Game:
         # Pushing the cards into the destination tableau
         while not cards.is_empty():
             self.tableau[destination_index].push(cards.pop())
-    
-    # Displaying current game state
-    def display(self):
-        # Displaying tableau
-        print("\nTableau:\n")
-        for i in range(7):
-            print("Tableau "+str(i+1)+":",end=" ")
-            self.tableau[i].display()
-            
-        # Displaying Foundation
-        print("\nFoundations:\n")
-        for i in range(4):
-            print("Foundation "+str(i+1)+":",end=" ")
-            self.foundation[i].display()
         
-        # Displaying stock and waste
-        self.stock_pile.display()
-        
-        # Printing the moves and hints count
-        print(f"\nMoves Count: {self.count}\nHints Count: {self.hint_count}")
+        # Flipping tableaus top cards
+        self.flip_tableau_card(source_index)
     
     # Drawing card from stock to waste pile
     def draw_card_from_stockpile(self):
         self.stock_pile.draw_card()
+        if self.stock_pile.get_waste_pile().get_top()!=None:
+            self.flip_cards(self.stock_pile.get_waste_pile().get_top())
         self.count+=1
         
     # Win condition if all four foundations are filled by cards
     def game_win_condition(self):
+        if self.stock_pile.is_empty():
+            for i in range(7):
+                if (not self.tableau[i].is_empty()):
+                    current = self.tableau[i].get_top()
+                    while (current):
+                        if(current.card.get_face_down()):
+                            return "F"
+                        current = current.next
+            if(self.auto_move_cards()):
+                return "C"
+
         for foundation in self.foundation:
             if foundation.cards_count()!=13:
-                return False
-        return True
-
+                return "F"
+        return "W"
+    
     # Hint if any valid move available
     def get_hint(self):
 
@@ -351,3 +373,147 @@ class Game:
                 return f"Hint: Move card {str(self.stock_pile.peek())} from Waste to Foundation {i+1}."
 
         return "No hint available!"
+
+    # Automatically moving cards in the end
+    def auto_move_cards(self):
+        moved = True
+        is_card_moved = False
+        while(moved):
+            moved=False
+            for i in range(7):
+                if not self.tableau[i].is_empty():
+                    # Checking if valid move for tableau to foundation
+                    for j in range(4): # Iterating over the foundations
+                        # Checking move validity
+                        if self.valid_tableau_to_foundation_move(i, j):
+                            self.foundation[j].push(self.tableau[i].pop())
+                            moved = True
+                            is_card_moved=True
+                    if moved:
+                        moved = False
+                        break
+        return is_card_moved
+
+    # Displaying current game state
+    def display(self):
+        try:
+            # Displaying tableau
+            print("\nTableau:\n")
+            for i in range(7):
+                print("Tableau "+str(i+1)+":",end=" ")
+                self.display_list(self.tableau[i].get_top())
+                
+            # Displaying Foundation
+            print("\nFoundations:\n")
+            for i in range(4):
+                print("Foundation "+str(i+1)+":",end=" ")
+                self.display_list(self.foundation[i].get_top())
+            
+            # Displaying stock pile
+            print("\nStock Pile:", end=" ")
+            if self.stock_pile.get_stock_pile().is_empty(): print("No cards available!")
+            else: print("Cards available")
+            
+            # Displaying waste pile
+            print("\nWaste Pile:",end=" ")
+            if self.stock_pile.get_waste_pile().is_empty():print("No cards available!")
+            else: self.display_list(self.stock_pile.get_waste_pile().get_top())
+                    
+            # Printing the moves and hints count
+            print(f"\nMoves Count: {self.count}\nHints Count: {self.hint_count}")
+        except Exception as e:
+            print(f"An error occured: {e}")
+    
+    # Displaying cards for a single list head passed
+    def display_list(self,head):
+        if head==None:
+            print()
+            return
+
+        cards = []
+        current = head
+
+        # Appending the cards into the array
+        while current:
+            cards.append(current.card)
+            current = current.next
+        
+        # Popping and then printing each element so that the cards are printed in correct order
+        while cards:
+            card = cards.pop()
+            # If card is found
+            if card is not None:
+                # If card is face down prints face down for the card
+                if card.get_face_down():
+                    print("Face-Down", end=" -> ")
+                # If card is face up it prints card's rank and suit
+                else:
+                    print(str(card),end=" -> ")
+                    
+            # If card not found it breaks the loop
+            else:
+                break
+        
+        print()
+        
+    # Assisstance for the gui returning the cards
+    def get_all_cards_for_list(self,head):
+        # If the linked list is empty, return an empty list
+        if head is None:
+            return []
+
+        # Temporary array to hold cards
+        cards = []
+        current = head
+
+        # Iterate through the linked list and collect the cards
+        while current:
+            cards.append(current.card)
+            current = current.next 
+
+        cards.reverse()
+        return cards
+
+    # Loading from tableaus for gui
+    def get_tableau_cards(self):
+        tableau_images = []
+        for tableau in self.tableau:
+            # Get all the cards in the tableau
+            tableau_images.append(self.get_all_cards_for_list(tableau.get_top()))
+        return tableau_images
+
+    # Loading from foundations for gui
+    def get_foundation_images(self):
+        foundation_images = []
+        for foundation in self.foundation:
+            # Get all the cards in the foundation
+            foundation_images.append(self.get_all_cards_for_list(foundation.get_top()))
+        return foundation_images
+
+    # Loading from waste for gui
+    def get_waste_pile_images(self):
+        return self.get_all_cards_for_list(self.stock_pile.get_waste_pile().get_top())
+    
+    # Flipping all cards in the linked list
+    def flip_cards(self,head):
+        # If the linked list is empty, do nothing
+        if head == None:
+            return
+
+        # Flip the cards so that all cards are face up
+        current = head
+        while current:
+            # Flip the card if it is face down
+            if not current.card.get_face_down():
+                current.card.flip_card()
+            current = current.next
+
+        # Ensuring that the head card is always visible
+        head.card.flip_card()
+    
+    # Flip the tableau card
+    def flip_tableau_card(self,source_index):
+        # Flipping the top card if needed
+        if self.tableau[source_index].get_top()!=None:
+            if self.tableau[source_index].get_top().card.get_face_down():
+                self.tableau[source_index].get_top().card.flip_card()

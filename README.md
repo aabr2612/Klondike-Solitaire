@@ -1,139 +1,174 @@
-# CS200M24PID73
+# Klondike Solitaire - Python Implementation
 
-# Klondike Solitaire
+## Overview
 
-<!-- Introduction -->
+Klondike Solitaire is a classic single-player card game where the goal is to move all 52 cards into four foundation piles. This game implemented in Python focuses on the use of **Data Structures (DSA)** to manage the game logic effectively. Custom-built data structures like stacks, queues, and linked lists are used to handle card movements and ensure valid gameplay.
 
-## Introduction
+This project shows the effective application of **Data Structures** and **Object-Oriented Programming** (OOP) principles.
 
-    Klondike Solitaire is a classic game implemented in python using different custom built data structures i.e., Stack, Queue and Linkedlist. It consists of 52 cards the user has to move all these cards to their foundations by making moves from tableaus and stock piles to ensure a win.
+## Key Features
 
-<!-- Key Features -->
+### 1. **Single Card Movements**
+- Move a single card between the tableau, foundation, and waste pile, according to the game's rules.
 
-## Features
+### 2. **Multiple Card Movements**
+- Move multiple cards between tableau piles, as long as the sequence follows the rules (alternating colors and descending ranks).
 
-    Here are some of the important features implemented in the game:
+### 3. **Draw Cards from the Stockpile**
+- Draw cards from the stockpile to the waste pile, with the top card of the waste pile available for valid moves.
 
-### 1. Single card movements:
+### 4. **Move Validations**
+- All card movements are validated to ensure that they adhere to the game's rules based on rank and suit.
 
-        Single cards can be moved between foundation, tableaus and waste pile.
+### 5. **Move Hint**
+- Suggests valid moves when the player is stuck, making use of the current game state to identify possible moves.
 
-### 2. Multiple card movements:
+### 6. **Auto-Win**
+- Automatically moves valid cards to the foundation piles as the win condition meets.
 
-        Multiple cards can be moved at a time from tableau to tableau on the basis of their ranks and suits validations.
+### 7. **Win Game**
+- The game ends when all cards are successfully moved to the foundation piles, followed by a congratulations message, number of hints used, and the moves made.
 
-### 3. Draw card from stockpile:
+### 8. **Backend Flexibility**
+- The backend is flexible enough to work with any UI interface (GUI or Console-based).
 
-        Card can be drawn from the stock pile to waste pile so that the top card in waste pile is visible and able to be moved.
+## DSA in Klondike Solitaire
 
-### 4. Move validations:
+### 1. **Stacks (Linked List-based)**
+  Stacks are used for the tableau, foundation, and waste piles, which adhere to the **Last-In-First-Out (LIFO)** principle:
+- **Tableau Piles**: Cards are moved based on descending order and alternating colors.
+- **Foundation Piles**: Cards are added in ascending order (Ace to King).
+- **Waste Pile**: Cards are managed in sequence, drawn, or removed.
 
-        Game validations logic has been implemented to ensure that the single or multiple card movement is valid by checking their ranks, suits and source and destination points to ensure game flow.
+  Stacks are implemented with linked lists, ensuring operations like (`push`, `pop`, `peek`).
 
-### 5. Move hint:
+### 2. **Queues (Implemented with Two Stacks)**
+  The **stockpile** and **waste pile** are managed using a **queue**, implemented with two stacks, following the **First-In-First-Out (FIFO)** principle:
+- **Stockpile**: Cards that haven't been drawn are managed in FIFO order.
+- **Waste Pile**: Cards drawn from the stockpile are added to the waste pile, with the queue structure rebringing them back when the stockpile is empty.
 
-        Hint functionality implemented which tells the user if any valid move is available.
+### 3. **Linked Lists**
+  Linked lists allow dynamic storage for cards, enabling efficient insertions and deletions without pre-defined sizes. This structure supports:
+- **Card Movement**: Efficiently manages the card movement.
+- **Card Representation**: Each card is a node, simplifying management.
 
-### 6. Instructions:
+### 4. **Arrays**
+  Arrays are used for storing the deck cards and while moving and displaying cards in correct order.
 
-        Help and Rules menu has been made so that user can read and play the game and perform actions according to game rules.
+## OOP Usage
 
-### 7. Win Game:
+### **1. Encapsulation**
+  Classes like `Card`, `Deck`, `Stack`, and `Queue` hide internal data with private attributes (e.g., `__rank`, `__suit`, `__stock_pile`) and provide public methods (e.g., `get_suit()`, `draw_card()`, `push()`) to interact with them, ensuring data protection and integrity.
 
-        If user places all the cards into the foundations, it wins the game which then shows the number of moves and congratulations message.
+### **2. Composition**
+- The `Deck` class contains `Card` objects to form a deck.
+- The `Queue` class contains two `Stack` objects (`stock_pile` and `waste_pile`) to manage card movement.
+These relationships represent a "has-a" connection between the classes.
 
-<!-- Backend Files -->
+### **3. Abstraction**
+  High-level methods (e.g., `draw_card()`, `push()`, `enqueue()`) abstract complex operations and provide a simplified interface for users, hiding the underlying logic of card and stack management.
 
-## Backend:
+### **4. Method Overriding and Operator Overloading**
+- The `Card` class customizes methods such as:
+  - `__str__()` for displaying cards.
+  - `__eq__()` for comparing cards.
+  - `__init__()` for initializing card attributes.
+These allow specialized behaviors for `Card` objects.
 
-    For backend we have following:
+### **5. Polymorphism**
+  Overridden methods like `__str__()` and `__eq__()` in the `Card` class allow different behaviors based on the object type, enabling flexible operations such as comparing and displaying cards.
 
-### 1. Card.py:
+## Backend Architecture
 
-        Card class implementation with attributes suit, rank, face_down and name.
+The backend consists of the following files:
 
-### 2. Deck.py:
+- **Card.py:** Card class implementation with attributes suit, rank, face_down, and name.
+- **Deck.py:** Deck class array of 52 cards. It loads, shuffles, and then allows drawing cards using the method `draw_card`, which is used in the game to distribute cards among the tableau and foundation piles.
+- **LinkedList.py:** Linked list data structure is implemented to create stacks used for tableaus and foundations. It facilitates moving multiple cards between the tableaus and other piles.
+- **Queue.py:** Queue data structure is implemented using two stacks to handle the stockpile and waste pile functionality. It allows drawing cards from the stockpile to the waste pile and drawing the top card from the waste pile.
+- **Stack.py:** Stack data structure is implemented using a linked list, helping to implement the tableaus and foundation piles, along with the queue class used for the stockpile.
+- **Game.py:** The Game class initializes the tableaus, foundations, stockpile, and deck. It then uses the deck to distribute the cards among the tableaus and stockpile. It contains the logic for card movements, multiple card movements, and the hint system.
+- **Utility.py:** The utility file contains validation functions that ensure correct indexes and piles, verifying that cards are moved to the correct destination from the source.
 
-        Deck class array of 52 cards. It loads, shuffles and then allows to draw these by using method 'draw_card' which is used in game to distribute cards among tableau and foundation.
+## Frontend Architecture
 
-### 3. LinkedList.py:
+The frontend is currently implemented in the console. It has the following files:
 
-        Linkedlist datastructure is implemented in it used to make stacks used for tableaus and foundations. It helps in moving multiple cards in between the tableaus and other piles.
+- **UI.py:** UI contains the header and other menus implementation along with win game menu, which is implemented in CLI, allowing the user to interact with the backend to perform tasks using the UI.
+- **Main.py:** Main file contains all the driver code which interacts with the UI and Game files to make a flow of the game.
 
-### 4. Queue.py:
+## Game Flow
 
-        Queue datastructure is implemented using two stacks to implement the stock pile and waste pile functionality in the game. It allows us to draw card from stock to waste and draw top card from the waste pile.
+The game flow proceeds as follows:
 
-### 5 Stack.py:
+1. **Main Menu**:  
+   Upon running the `main.py` file, the main menu appears with the following options:
 
-        Stack datastructure is implemented using linkedlist which helps in implementing the tableaus and the foundation piles along with the queue class which is used as stockpile.
+   - **Play Game**:  
+     If the user selects to play the game, the game screen is displayed with a sub-menu of game options:
+     
+     - **1. Draw Card**:  
+       Allows the user to draw a card from the stockpile.
+     
+     - **2. Move Card**:  
+       Allows the user to move a single card between the game piles.
+     
+     - **3. Move Multiple Cards**:  
+       Allows the user to move multiple cards from one pile to another within the game.
+     
+     - **4. Get Hint**:  
+       Provides a hint for a valid move, helping the user when they are stuck.
+     
+     - **5. Exit**:  
+       Ends the current game session.
 
-### 6. Game.py:
+   - **Instructions**:  
+     Displays the instructions for playing the game.
 
-        Game class implemented which initializes the tableaus, foundations, stockpile and deck. Then it used deck to distribute the cards among the tableaus and stockpile. It contains all the logics for the card movements, multiple card movements and hint system.
+   - **Exit**:  
+     Closes the game and exits the application.
 
-### 7. Utility.py:
+## Folder Structure
 
-        Utility file contains the validation functions to ensure the indexes and piles to ensure that card is moved in correct destination from source.
+The project follows a well-organized folder structure for ease of development and maintenance:
 
-<!-- Frontend Files -->
+    Solitaire
+    ├── Classes
+    │   ├── card.py
+    │   ├── deck.py
+    │   ├── linkedlist.py
+    │   ├── queue.py
+    │   └── stack.py
+    ├── Game Files
+    │   ├── game.py
+    │   └── utility.py
+    ├── UI
+    │   └── ui.py
+    └── main.py
 
-## Frontend:
+## Conclusion
+   This Klondike Solitaire project focuses on the effective use of **Data Structures (DSA)**, such as **stacks**, **queues**, and **linked lists**, to efficiently manage card movements and game rules.
 
-    For frontend we have following:
+## How to Run the Game
 
-### 1. UI.py:
+To run the game, follow these steps:
 
-        UI contains the header and other menus implementation along with win game menu which is implemented in CLI which allows the user to interact with the backend to perform tasks using the ui.
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/aabr2612/Klondike-Solitare
+   
+2. **Navigate folder**
 
-### 2. Main.py:
+        cd solitaire
 
-        Main file contains all the driver code which interacts with the UI and Game files to make a flow of the game.
+3. **Run the main.py file**
 
-<!-- Game flow and structure-->
+        main.py
 
-## Game flow:
+4. **Dependencies**
 
-    The game flow continues as:
-        On running the main.py file a main menu appears with header and options:
-        -- 1. Play Game
-            If the user wants to play the game, further the game is printed and a sub menu of game appears:
-                -- 1. Draw card
-                    Allowing user to draw card from stockpile
-                -- 2. Move card
-                    Allowing user to move single card from between the game piles.
-                -- 3. Move multiple cards:
-                    Allowing the user to move multiple cards from one pile to other in the game.
-                -- 4. Get Hint:
-                    Allowing user to get a hint for a valid move
-                -- 5. Exit:
-                    Ends the current game
-        -- 2. Instructions
-            Displays all the instructions to play the game.
-        -- 3. Exit
-            Closes the game
+        python 3.X or higher version required
 
-    Here is the folder structure for the game:
+## License
 
-        CS200M24PID73
-        ├── Classes
-        │   ├── card.py
-        │   ├── deck.py
-        │   ├── linkedlist.py
-        │   ├── queue.py
-        │   └── stack.py
-        ├── Game Files
-        │   ├── game.py
-        │   └── utility.py
-        ├── UI
-        │   └── ui.py
-        └── main.py
-
-<!-- How to run game -->
-
-## How run game:
-
-    To run this game simply clone the repository:
-        `git clone https://gitlab.com/aabr2612/cs200m24pid73`
-
-    Then run the `main.py` file to run the game.
+This project is licensed under the MIT License.

@@ -1,3 +1,3 @@
 .vscode
-Mid-Project.pdf
-Console-Project.zip
+__pycache__
+*.pyc

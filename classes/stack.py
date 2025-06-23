@@ -4,49 +4,45 @@ from classes.linkedlist import LinkedList
 class Stack:
     # Constructor
     def __init__(self):
-        self.linkedList = LinkedList()
-        self.size = 0
+        self.__linkedList = LinkedList()
+        self.__size = 0
     
-    # Pushing the card into the stack
-    def push(self,card):
-        self.size +=1
-        self.linkedList.insert_at_head(card)
+    # Pushing the element into the stack
+    def push(self,element):
+        self.__size +=1
+        self.__linkedList.insert_at_head(element)
     
-    # Popping the card from stack
+    # Popping the element from stack
     def pop(self):
-        # Checks size if greater than 0 it pops the card from the stack
-        if self.size -1>=0:
-            self.size -=1
-            return self.linkedList.remove_from_head()
+        # Checks size if greater than 0 it pops the element from the stack
+        if not self.is_empty():
+            self.__size -=1
+            return self.__linkedList.remove_from_head()
         return None
 
-    # Viewing the top card in the stack
+    # Viewing the top element in the stack
     def peek(self):
-        # If the size of the stack is greater than 0
+        # If stack is empty
         if self.is_empty():
             return None
-        return self.linkedList.view_first_node()
+        # Else
+        return self.__linkedList.view_first_node()
     
-    # Finding a card in stack
-    def find_card(self,card_name):
+    # Finding an element in stack
+    def find_card(self,card):
         if self.is_empty():
             return None
 
-        return self.linkedList.find_node(card_name)
+        return self.__linkedList.find_node(card)
 
     # Number of cards in stack
     def cards_count(self):
-        return self.size
-    
-    # Flipping all cards in the stack
-    def flip_cards(self):
-        if self.size>0:
-            self.linkedList.flip_cards()
+        return self.__size
 
-    # Display function to display cards
-    def display(self):
-        self.linkedList.display_elements()
+    # Returns the top element in stack
+    def get_top(self):
+        return self.__linkedList.get_head()
 
     # Checks if the stack is empty
     def is_empty(self):
-        return self.linkedList.is_empty()
+        return self.__linkedList.is_empty()

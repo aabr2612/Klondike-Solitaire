@@ -4,65 +4,57 @@ from classes.stack import Stack
 class Queue:
     # Constructor
     def __init__(self):
-        self.stock_pile = Stack()
-        self.waste_pile = Stack()
-        self.size = 0
+        self.__stock_pile = Stack()
+        self.__waste_pile = Stack()
+        self.__size = 0
 
-    # Enqueue card into the queue
+    # Enqueue element into the queue
     def enqueue(self,card):
-        self.size += 1
-        self.stock_pile.push(card)
+        self.__size += 1
+        self.__stock_pile.push(card)
     
-    # Removing card from the queue
+    # Removing element from the queue
     def dequeue(self):
         # If waste pile is empty
-        if self.waste_pile.is_empty():
+        if self.__waste_pile.is_empty():
             return None
 
         # If waste pile is empty
-        card = self.waste_pile.pop()
-        self.size -= 1
+        card = self.__waste_pile.pop()
+        self.__size -= 1
 
-        # If after removing card waste pile is not empty flipping the existing cards for showing the cards
-        if not self.waste_pile.is_empty():
-            self.waste_pile.flip_cards()
         return card
     
     # Peek for queue
     def peek(self):
-        return self.waste_pile.peek()
+        return self.__waste_pile.peek()
     
     # Drawing card from stock to waste pile
     def draw_card(self):
         # If stock and waste 
-        if self.stock_pile.is_empty() and self.waste_pile.is_empty():
+        if self.__stock_pile.is_empty() and self.__waste_pile.is_empty():
             return
         
-        if self.stock_pile.is_empty():
-            while not self.waste_pile.is_empty():
-                self.stock_pile.push(self.waste_pile.pop())
+        if self.__stock_pile.is_empty():
+            while not self.__waste_pile.is_empty():
+                self.__stock_pile.push(self.__waste_pile.pop())
             return
         
-        card = self.stock_pile.pop()
-        self.waste_pile.push(card)
-        self.waste_pile.flip_cards()
+        card = self.__stock_pile.pop()
+        self.__waste_pile.push(card)
     
     # Number of cards in queue
     def cards_count(self):
-        return self.size
-    
-    # Display function to display cards
-    def display(self):
-        # Displaying stock pile
-        print("\nStock Pile:", end=" ")
-        if self.stock_pile.is_empty(): print(" No cards available!")
-        else: print("Cards available")
-        
-        # Displaying waste pile
-        print("\nWaste Pile:",end=" ")
-        if self.waste_pile.is_empty():print("No cards available!")
-        else: self.waste_pile.display()
+        return self.__size
 
     # Checks if the queue is empty
     def is_empty(self):
-        return self.size == 0
+        return self.__size == 0
+    
+    # Getters for the attributes
+    def get_stock_pile(self):
+        return self.__stock_pile
+
+    def get_waste_pile(self):
+        return self.__waste_pile
+    
